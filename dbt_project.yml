@@ -1,0 +1,62 @@
+
+name: 'gamblingfinder'
+version: '1.0.0'
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'gamblingfinder_pipeline'
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+models:
+  gamblingfinder:
+    10_lr_gambling:
+      lr_g_hyperparams:
+        +tags: hyperparam_tuning
+    11_lr_linksites:
+      lr_l_hyperparams:
+        +tags: hyperparam_tuning
+    20_xgb_gambling:
+      xgb_g_hyperparams:
+        +tags: hyperparam_tuning
+    21_xgb_linksites:
+      xgb_l_hyperparams:
+        +tags: hyperparam_tuning
+    30_nn_gambling:
+      nn_g_hyperparams:
+        +tags: hyperparam_tuning
+    31_nn_linksites:
+      nn_l_hyperparams:
+        +tags: hyperparam_tuning
+    40_doc2vec_svm:
+      d2v_svm_hyperparams:
+        +tags: hyperparam_tuning
+    50_feat_incl_crawler:
+      feat_incl_crawler_hyperparams:
+        +tags: hyperparam_tuning
+    51_feat_countvec:
+      +enabled: false
+      feat_countvec_hyperparams:
+        +tags: hyperparam_tuning
+    52_feat_tfidf:
+      +enabled: false
+      feat_tfidf_hyperparams:
+        +tags: hyperparam_tuning
+    60_lr_multi:
+      lr_multi_hyperparams:
+        +tags: hyperparam_tuning

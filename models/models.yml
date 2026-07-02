@@ -1,0 +1,63 @@
+version: 2
+
+models:
+  - name: lr_g_train_test
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_test')
+  - name: xgb_g_train_test
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_test')
+  - name: nn_g_train_test
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_test')
+  - name: lr_l_train_test
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_test_linksites')
+  - name: xgb_l_train_test
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_test_linksites')
+  - name: nn_l_train_test
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_test_linksites')
+  - name: d2v_svm_train_test
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_test')
+  - name: feat_incl_crawler_train_test
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_test')
+  - name: feat_countvec_train_test
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_test')
+  - name: feat_tfidf_train_test
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_test')
+  - name: lr_multi_train_test
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_test')
+  - name: lr_chained_test
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_test')
