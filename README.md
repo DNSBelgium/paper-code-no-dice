@@ -2,7 +2,7 @@
 
 This repository contains code and data alongside the paper "No Dice: Detecting Illegal Gambling Websites in a Top-Level Domain", currently under submission at KDD 2027.
 
-The code is structured as a [dbt](https://www.getdbt.com/) pipeline. To run it, create a new Python virtual environment and execute the following steps:
+The code is structured as a [dbt](https://docs.getdbt.com/docs/introduction?version=2.0&name=Fusion) pipeline. To run it, create a new Python virtual environment and execute the following steps:
 
 ```
 pip install -e ./python
