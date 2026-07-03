@@ -15,11 +15,7 @@ dependencies = [
     "xgboost==3.1.2",
     "scikit-learn==1.8.0",
     "matplotlib==3.10.8",
-    "umap-learn==0.5.11",
-    "networkx==3.6.1",
     "optuna==4.6.0",
     "torch==2.10.0",
     "tqdm==4.67.3",
-    "gensim==4.4.0",
-    "stop-words==2025.11.4",
 ]
