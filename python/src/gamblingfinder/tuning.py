@@ -139,18 +139,35 @@ def tune_hyperparams_binary_xgb(ground_truth_train: pd.DataFrame) -> pd.DataFram
     )
 
 
-def get_objective_binary_lr(X, y, only_use_embeddings: bool = True):
+def get_objective_binary_lr(
+        X,
+        y,
+        only_use_embeddings: bool = True,
+        embedding_dim: int = 384,
+        embedding_feature_prefix: str = "f_emb_"
+    ):
     return generic_get_objective(
         X, y,
         LogisticRegression,
         param_binary_lr,
-        FeatureConfig(use_bag_of_words=0, only_use_embeddings=only_use_embeddings)
+        FeatureConfig(
+            use_bag_of_words=0,
+            only_use_embeddings=only_use_embeddings,
+            embedding_dim=embedding_dim,
+            embedding_feature_prefix=embedding_feature_prefix
+        )
     )
 
 
-def tune_hyperparams_binary_lr(ground_truth_train: pd.DataFrame, only_use_embeddings: bool = True) -> pd.DataFrame:
+def tune_hyperparams_binary_lr(
+        ground_truth_train: pd.DataFrame,
+        only_use_embeddings: bool = True,
+        embedding_dim: int = 384,
+        embedding_feature_prefix: str = "f_emb_"
+    ) -> pd.DataFrame:
     return tune_hyperparams_binary(
-        ground_truth_train, get_objective_fn=lambda X, y: get_objective_binary_lr(X, y, only_use_embeddings)
+        ground_truth_train,
+        get_objective_fn=lambda X, y: get_objective_binary_lr(X, y, only_use_embeddings, embedding_dim, embedding_feature_prefix)
     )
 
 

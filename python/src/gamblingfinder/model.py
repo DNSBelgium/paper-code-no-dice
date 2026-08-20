@@ -74,6 +74,7 @@ class FeatureConfig:
     use_bag_of_words: int # 0 = no bag of words, 1 = count vectorizer, 2 = tfidf vectorizer
     only_use_embeddings: bool | None
     embedding_dim: int = 384
+    embedding_feature_prefix: str = "f_emb_"
     min_df: int | None = None
     max_df: float | None = None
     bow_binary: bool | None = None
@@ -81,7 +82,7 @@ class FeatureConfig:
 
 def get_column_transformer(feature_config: FeatureConfig) -> ColumnTransformer:
     if feature_config.use_bag_of_words == 0:
-        embedding_features = [f"f_emb_{i}" for i in range(1, feature_config.embedding_dim + 1)]
+        embedding_features = [f"{feature_config.embedding_feature_prefix}{i}" for i in range(1, feature_config.embedding_dim + 1)]
         transformers = (
             [
                 ("num", RobustScaler(), NUMERIC_FEATURES),
