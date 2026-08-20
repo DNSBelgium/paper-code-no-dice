@@ -1,6 +1,7 @@
 from gamblingfinder.model import exec_train_test_binary, FeatureConfig
 from sklearn.linear_model import LogisticRegression
 
+
 def model(dbt, _session):
     ground_truth_train = dbt.ref("stg_scr_train").df()
     ground_truth_test = dbt.ref("stg_scr_test").df()
@@ -13,7 +14,12 @@ def model(dbt, _session):
         params,
         model_name,
         LogisticRegression,
-        FeatureConfig(use_bag_of_words=0, only_use_embeddings=True, embedding_dim=2048, embedding_feature_prefix="f_qwen_text_emb_"),
+        FeatureConfig(
+            use_bag_of_words=0,
+            only_use_embeddings=True,
+            embedding_dim=2048,
+            embedding_feature_prefix="f_qwen_text_emb_",
+        ),
     )
 
     return result

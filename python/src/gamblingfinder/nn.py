@@ -9,8 +9,8 @@ import pandas as pd
 
 from gamblingfinder.model import FeatureConfig, get_column_transformer
 
-
 SEED = 739841
+
 
 def set_seed():
     torch.manual_seed(SEED)
@@ -68,6 +68,8 @@ class BinaryNNClassifier(nn.Module):
 
 
 TQDM_ENABLED = False
+
+
 def maybe_tqdm(iterable):
     if TQDM_ENABLED:
         return tqdm(iterable)
@@ -137,7 +139,6 @@ class GamblingNN:
             FeatureConfig(use_bag_of_words=0, only_use_embeddings=True)
         )
         self.model = None
-    
 
     def train(self, X_train: pd.DataFrame, y_train):
         X_train_transformed = self.column_transformer.fit_transform(X_train)
@@ -151,11 +152,10 @@ class GamblingNN:
             dropout=self.dropout,
             num_hidden_layers=self.num_hidden_layers,
         )
-    
+
     def predict(self, X: pd.DataFrame) -> npt.NDArray[np.float64]:
         X_transformed = self.column_transformer.transform(X)
         return self.model.predict(X_transformed)
-    
 
     def save(self, name: str):
         torch.save(
@@ -172,7 +172,7 @@ class GamblingNN:
             },
             f"data/{name}.pt",
         )
-    
+
     @staticmethod
     def load(name: str) -> "GamblingNN":
         checkpoint = torch.load(f"data/{name}.pt", weights_only=False)

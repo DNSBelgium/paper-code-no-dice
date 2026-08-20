@@ -1,5 +1,6 @@
 from gamblingfinder.sift import train_test_classifier
 
+
 def model(dbt, _session):
     histograms = dbt.ref("scr_sift_histograms").df()
 

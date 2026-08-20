@@ -1,5 +1,6 @@
 from gamblingfinder.nn import GamblingNN, set_seed
 
+
 def model(dbt, _session):
     ground_truth_train = dbt.ref("stg_train").df()
     ground_truth_test = dbt.ref("stg_test").df()

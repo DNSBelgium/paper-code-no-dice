@@ -10,6 +10,7 @@ from sklearn.svm import SVC
 
 SEED = 739841
 
+
 def param_binary_xgb(trial):
     return {
         "max_depth": trial.suggest_int("max_depth", 5, 8),
@@ -22,19 +23,19 @@ def param_binary_xgb(trial):
         "lambda": trial.suggest_float("lambda", 1e-8, 10.0, log=True),
         "alpha": trial.suggest_float("alpha", 1e-8, 10.0, log=True),
         "scale_pos_weight": trial.suggest_float("scale_pos_weight", 1.0, 10.0),
-}
+    }
 
 
-def param_binary_lr(trial, solvers=["lbfgs", "liblinear", "newton-cg", "newton-cholesky", "sag", "saga"]):
+def param_binary_lr(
+    trial, solvers=["lbfgs", "liblinear", "newton-cg", "newton-cholesky", "sag", "saga"]
+):
     param = {
         "solver": trial.suggest_categorical(
             "solver",
             solvers,
         ),
         "C": trial.suggest_float("C", 1e-4, 1000, log=True),
-        "class_weight": trial.suggest_categorical(
-            "class_weight", ["balanced", None]
-        ),
+        "class_weight": trial.suggest_categorical("class_weight", ["balanced", None]),
     }
 
     if param["solver"] in (
@@ -49,24 +50,26 @@ def param_binary_lr(trial, solvers=["lbfgs", "liblinear", "newton-cg", "newton-c
         param["l1_ratio"] = trial.suggest_float("l1_ratio", 0, 1)
     else:
         raise ValueError(f"Unexpected solver: {param['solver']}")
-    
+
     return param
 
 
 def param_binary_lr_bow(trial):
-    return param_binary_lr(trial, solvers=["lbfgs", "liblinear", "newton-cg", "sag", "saga"])
+    return param_binary_lr(
+        trial, solvers=["lbfgs", "liblinear", "newton-cg", "sag", "saga"]
+    )
 
 
 def param_multi_lr(trial):
-    return param_binary_lr(trial, solvers=["lbfgs", "newton-cg", "newton-cholesky", "sag", "saga"])
+    return param_binary_lr(
+        trial, solvers=["lbfgs", "newton-cg", "newton-cholesky", "sag", "saga"]
+    )
 
 
 def param_binary_svc(trial):
     return {
         "C": trial.suggest_float("C", 1e-4, 1000, log=True),
-        "class_weight": trial.suggest_categorical(
-            "class_weight", ["balanced", None]
-        ),
+        "class_weight": trial.suggest_categorical("class_weight", ["balanced", None]),
         "probability": trial.suggest_categorical("probability", [True]),
         "kernel": trial.suggest_categorical("kernel", ["linear"]),
     }
@@ -105,12 +108,14 @@ def generic_get_objective(X, y, model_class, param_fn, feature_config: FeatureCo
 
     return objective
 
+
 def get_objective_binary_xgb(X, y):
     return generic_get_objective(
-        X, y,
+        X,
+        y,
         XGBClassifier,
         param_binary_xgb,
-        FeatureConfig(use_bag_of_words=0, only_use_embeddings=True)
+        FeatureConfig(use_bag_of_words=0, only_use_embeddings=True),
     )
 
 
@@ -140,49 +145,58 @@ def tune_hyperparams_binary_xgb(ground_truth_train: pd.DataFrame) -> pd.DataFram
 
 
 def get_objective_binary_lr(
+    X,
+    y,
+    only_use_embeddings: bool = True,
+    embedding_dim: int = 384,
+    embedding_feature_prefix: str = "f_emb_",
+):
+    return generic_get_objective(
         X,
         y,
-        only_use_embeddings: bool = True,
-        embedding_dim: int = 384,
-        embedding_feature_prefix: str = "f_emb_"
-    ):
-    return generic_get_objective(
-        X, y,
         LogisticRegression,
         param_binary_lr,
         FeatureConfig(
             use_bag_of_words=0,
             only_use_embeddings=only_use_embeddings,
             embedding_dim=embedding_dim,
-            embedding_feature_prefix=embedding_feature_prefix
-        )
+            embedding_feature_prefix=embedding_feature_prefix,
+        ),
     )
 
 
 def tune_hyperparams_binary_lr(
-        ground_truth_train: pd.DataFrame,
-        only_use_embeddings: bool = True,
-        embedding_dim: int = 384,
-        embedding_feature_prefix: str = "f_emb_"
-    ) -> pd.DataFrame:
+    ground_truth_train: pd.DataFrame,
+    only_use_embeddings: bool = True,
+    embedding_dim: int = 384,
+    embedding_feature_prefix: str = "f_emb_",
+) -> pd.DataFrame:
     return tune_hyperparams_binary(
         ground_truth_train,
-        get_objective_fn=lambda X, y: get_objective_binary_lr(X, y, only_use_embeddings, embedding_dim, embedding_feature_prefix)
+        get_objective_fn=lambda X, y: get_objective_binary_lr(
+            X, y, only_use_embeddings, embedding_dim, embedding_feature_prefix
+        ),
     )
 
 
 def get_objective_binary_svc(X, y, embedding_dim: int):
     return generic_get_objective(
-        X, y,
+        X,
+        y,
         SVC,
         param_binary_svc,
-        FeatureConfig(use_bag_of_words=0, only_use_embeddings=True, embedding_dim=embedding_dim)
+        FeatureConfig(
+            use_bag_of_words=0, only_use_embeddings=True, embedding_dim=embedding_dim
+        ),
     )
 
 
-def tune_hyperparams_binary_svc(ground_truth_train: pd.DataFrame, embedding_dim: int) -> pd.DataFrame:
+def tune_hyperparams_binary_svc(
+    ground_truth_train: pd.DataFrame, embedding_dim: int
+) -> pd.DataFrame:
     return tune_hyperparams_binary(
-        ground_truth_train, get_objective_fn=lambda X, y: get_objective_binary_svc(X, y, embedding_dim)
+        ground_truth_train,
+        get_objective_fn=lambda X, y: get_objective_binary_svc(X, y, embedding_dim),
     )
 
 
@@ -217,7 +231,9 @@ def get_objective_binary_lr_bow(X, y, tfidf: bool):
     def objective(trial):
         param = param_binary_lr_bow(trial)
 
-        feature_config = FeatureConfig(use_bag_of_words=1 + int(tfidf), only_use_embeddings=None)
+        feature_config = FeatureConfig(
+            use_bag_of_words=1 + int(tfidf), only_use_embeddings=None
+        )
         feature_config.min_df = trial.suggest_int("min_df", 1, 20)
         feature_config.max_df = trial.suggest_float("max_df", 0.5, 1.0)
         feature_config.bow_binary = trial.suggest_categorical(
@@ -241,24 +257,29 @@ def get_objective_binary_lr_bow(X, y, tfidf: bool):
     return objective
 
 
-def tune_hyperparams_binary_lr_countvec(ground_truth_train: pd.DataFrame) -> pd.DataFrame:
+def tune_hyperparams_binary_lr_countvec(
+    ground_truth_train: pd.DataFrame,
+) -> pd.DataFrame:
     return tune_hyperparams_binary(
-        ground_truth_train, get_objective_fn=lambda X, y: get_objective_binary_lr_bow(X, y, tfidf=False)
+        ground_truth_train,
+        get_objective_fn=lambda X, y: get_objective_binary_lr_bow(X, y, tfidf=False),
     )
 
 
 def tune_hyperparams_binary_lr_tfidf(ground_truth_train: pd.DataFrame) -> pd.DataFrame:
     return tune_hyperparams_binary(
-        ground_truth_train, get_objective_fn=lambda X, y: get_objective_binary_lr_bow(X, y, tfidf=True)
+        ground_truth_train,
+        get_objective_fn=lambda X, y: get_objective_binary_lr_bow(X, y, tfidf=True),
     )
 
 
 def get_objective_multi_lr(X, y):
     return generic_get_objective(
-        X, y,
+        X,
+        y,
         LogisticRegression,
         param_multi_lr,
-        FeatureConfig(use_bag_of_words=0, only_use_embeddings=True)
+        FeatureConfig(use_bag_of_words=0, only_use_embeddings=True),
     )
 
 

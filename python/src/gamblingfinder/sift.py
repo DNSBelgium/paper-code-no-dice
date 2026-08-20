@@ -26,24 +26,22 @@ SEED = 739841
 # sampled_indices = np.random.choice(num_rows, num_samples, replace=False)
 # sampled_descriptors = descriptors[sampled_indices]
 
+
 def descriptors_cluster_centers(descriptors_series: pd.Series) -> pd.DataFrame:
-    descriptors = np.vstack(
-        descriptors_series.apply(np.vstack)
-    )
+    descriptors = np.vstack(descriptors_series.apply(np.vstack))
     print(descriptors.shape)
 
     kmeans = KMeans(n_clusters=2000, random_state=SEED).fit(descriptors)
     centers = kmeans.cluster_centers_.tolist()
 
-    result = pd.DataFrame({
-        "cluster_id": range(len(centers)),
-        "center": centers
-    })
+    result = pd.DataFrame({"cluster_id": range(len(centers)), "center": centers})
 
     return result
 
 
-def descriptors_to_histogram(descriptors: np.ndarray, sift_clusters: np.ndarray) -> list[int]:
+def descriptors_to_histogram(
+    descriptors: np.ndarray, sift_clusters: np.ndarray
+) -> list[int]:
     closest_cluster_indices = pairwise_distances_argmin(descriptors, sift_clusters)
     histogram = np.bincount(closest_cluster_indices, minlength=len(sift_clusters))
     result = histogram.tolist()
@@ -52,10 +50,12 @@ def descriptors_to_histogram(descriptors: np.ndarray, sift_clusters: np.ndarray)
 
 
 def train_test_classifier(X_train, y_train, X_test):
-    clf = Pipeline([
-        ("scaler", StandardScaler()),
-        ("svc", SVC(kernel="rbf", random_state=SEED, probability=True))
-    ])
+    clf = Pipeline(
+        [
+            ("scaler", StandardScaler()),
+            ("svc", SVC(kernel="rbf", random_state=SEED, probability=True)),
+        ]
+    )
     clf.fit(X_train, y_train)
     joblib.dump(clf, "data/svc_sift_gambling.joblib")
 
@@ -65,7 +65,9 @@ def train_test_classifier(X_train, y_train, X_test):
 
 def predict_from_descriptors(descriptors_series: pd.Series, sift_clusters: np.ndarray):
     histograms = descriptors_series.apply(
-        lambda descriptors: descriptors_to_histogram(np.array(descriptors.tolist()), sift_clusters)
+        lambda descriptors: descriptors_to_histogram(
+            np.array(descriptors.tolist()), sift_clusters
+        )
     )
 
     X = histograms.tolist()

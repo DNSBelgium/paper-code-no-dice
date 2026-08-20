@@ -1,6 +1,7 @@
 from gamblingfinder.model import exec_train_test_binary, FeatureConfig
 from sklearn.svm import SVC
 
+
 def model(dbt, _session):
     ground_truth_train = dbt.ref("stg_doc2vec_train").df()
     ground_truth_test = dbt.ref("stg_doc2vec_test").df()

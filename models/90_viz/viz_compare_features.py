@@ -15,7 +15,6 @@ def model(dbt, _session):
     # preds_countvec = dbt.ref("feat_countvec_train_test").df()
     # preds_tfidf = dbt.ref("feat_tfidf_train_test").df()
 
-
     if BOW_ENABLED:
         assert preds_countvec is not None and preds_tfidf is not None
         y_trues = [
@@ -30,7 +29,12 @@ def model(dbt, _session):
             preds_tfidf["prediction"],
             preds_embonly["prediction"],
         ]
-        labels = ["CountVectorizer", "Emb. + crawler feat.", "TfidfVectorizer", "Emb. only"]
+        labels = [
+            "CountVectorizer",
+            "Emb. + crawler feat.",
+            "TfidfVectorizer",
+            "Emb. only",
+        ]
     else:
         y_trues = [
             preds_with_crawler_feat["label"],

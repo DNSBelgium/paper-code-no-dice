@@ -23,7 +23,13 @@ def model(dbt, _session):
         preds_qwen_text["prediction"],
         preds_e5_text["prediction"],
     ]
-    labels = ["SIFT + SVM", "Img. emb. (Qwen)", "Multimodal emb. (Qwen)", "Text emb. (Qwen)", "Text emb. (e5)"]
+    labels = [
+        "SIFT + SVM",
+        "Img. emb. (Qwen)",
+        "Multimodal emb. (Qwen)",
+        "Text emb. (Qwen)",
+        "Text emb. (e5)",
+    ]
 
     several_precision_recall_curves(
         y_trues,

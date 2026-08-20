@@ -81,9 +81,11 @@ def make_plots_binary(predictions_with_labels: pd.DataFrame, file_prefix: str):
     plt.close()
 
 
-def make_plots_multi(predictions_with_labels: pd.DataFrame, file_prefix: str, title_appendix: str = ""):
+def make_plots_multi(
+    predictions_with_labels: pd.DataFrame, file_prefix: str, title_appendix: str = ""
+):
     matplotlib.use("Agg")
-    plt.rcParams.update({'font.size': 13})
+    plt.rcParams.update({"font.size": 13})
 
     y_true = predictions_with_labels["label"]
     y_pred = predictions_with_labels["prediction"]
@@ -106,11 +108,16 @@ def make_plots_multi(predictions_with_labels: pd.DataFrame, file_prefix: str, ti
 
 
 def several_precision_recall_curves(
-    y_trues, y_scores, labels: list[str], filename: str, title_appendix: str = "", legend_font_size: int | None = None,
+    y_trues,
+    y_scores,
+    labels: list[str],
+    filename: str,
+    title_appendix: str = "",
+    legend_font_size: int | None = None,
 ):
     matplotlib.use("Agg")
 
-    plt.rcParams.update({'font.size': 18})
+    plt.rcParams.update({"font.size": 18})
 
     plt.figure(figsize=(7, 6))
     for y_true, y_score, label in zip(y_trues, y_scores, labels):
@@ -132,15 +139,20 @@ def several_precision_recall_curves(
     plt.savefig(f"plots/{filename}.pdf")
     plt.close()
 
-    plt.rcParams.update({'font.size': 10})
+    plt.rcParams.update({"font.size": 10})
 
 
 def several_roc_curves(
-    y_trues, y_scores, labels: list[str], filename: str, title_appendix: str = "", legend_font_size: int | None = None,
+    y_trues,
+    y_scores,
+    labels: list[str],
+    filename: str,
+    title_appendix: str = "",
+    legend_font_size: int | None = None,
 ):
     matplotlib.use("Agg")
 
-    plt.rcParams.update({'font.size': 18})
+    plt.rcParams.update({"font.size": 18})
 
     plt.figure(figsize=(7, 6))
     for y_true, y_score, label in zip(y_trues, y_scores, labels):

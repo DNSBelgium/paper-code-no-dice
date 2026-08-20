@@ -1,6 +1,7 @@
 from gamblingfinder.model import exec_train_test_binary, FeatureConfig
 from sklearn.linear_model import LogisticRegression
 
+
 def model(dbt, _session):
     ground_truth_train = dbt.ref("stg_train").df()
     ground_truth_test = dbt.ref("stg_test").df()
