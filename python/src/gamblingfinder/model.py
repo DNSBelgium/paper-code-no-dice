@@ -76,7 +76,7 @@ class FeatureConfig:
     )
     only_use_embeddings: bool | None
     embedding_dim: int = 384
-    embedding_feature_prefix: str = "f_emb_"
+    embedding_feature_prefix: str | list[str] = "f_emb_"
     min_df: int | None = None
     max_df: float | None = None
     bow_binary: bool | None = None
@@ -84,10 +84,18 @@ class FeatureConfig:
 
 def get_column_transformer(feature_config: FeatureConfig) -> ColumnTransformer:
     if feature_config.use_bag_of_words == 0:
-        embedding_features = [
-            f"{feature_config.embedding_feature_prefix}{i}"
-            for i in range(1, feature_config.embedding_dim + 1)
-        ]
+        if isinstance(feature_config.embedding_feature_prefix, str):
+            embedding_features = [
+                f"{feature_config.embedding_feature_prefix}{i}"
+                for i in range(1, feature_config.embedding_dim + 1)
+            ]
+        else:
+            assert isinstance(feature_config.embedding_feature_prefix, list)
+            embedding_features = []
+            for prefix in feature_config.embedding_feature_prefix:
+                embedding_features.extend(
+                    [f"{prefix}{i}" for i in range(1, feature_config.embedding_dim + 1)]
+                )
         transformers = (
             [
                 ("num", RobustScaler(), NUMERIC_FEATURES),
